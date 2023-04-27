@@ -1,7 +1,7 @@
 import numpy as np
 
 def padding_commit_code_line(data, max_line, max_length):
-    new_data = list()
+    new_data = []
     for d in data:
         if len(d) == max_line:
             new_data.append(d)
@@ -9,7 +9,7 @@ def padding_commit_code_line(data, max_line, max_length):
             new_data.append(d[:max_line])
         else:
             num_added_line = max_line - len(d)
-            for i in range(num_added_line):
+            for _ in range(num_added_line):
                 d.append(('<NULL> ' * max_length).strip())
             new_data.append(d)
     return new_data
@@ -41,10 +41,7 @@ def padding_data(data, dictionary, params, type):
         exit()
 
 def padding_message(data, max_length):
-    new_data = list()
-    for d in data:
-        new_data.append(padding_length(line=d, max_length=max_length))
-    return new_data
+    return [padding_length(line=d, max_length=max_length) for d in data]
 
 def mapping_dict_msg(pad_msg, dict_msg):
     return np.array(
@@ -59,8 +56,9 @@ def mapping_dict_code(pad_code, dict_code):
 
 def padding_commit_code(data, max_line, max_length):
     padding_length = padding_commit_code_length(data=data, max_length=max_length)
-    padding_line = padding_commit_code_line(padding_length, max_line=max_line, max_length=max_length)
-    return padding_line
+    return padding_commit_code_line(
+        padding_length, max_line=max_line, max_length=max_length
+    )
 
 def padding_commit_code_length(data, max_length):
     return [padding_multiple_length(lines=commit, max_length=max_length) for commit in data]
