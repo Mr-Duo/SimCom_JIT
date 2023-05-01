@@ -56,8 +56,8 @@ def evaluation_model(data, params):
 
             # Forward
             predict = model(added_code, removed_code)
-            all_predict += predict
-            all_label += labels.tolist()
+            all_predict += predict.cpu().detach().numpy().tolist()
+            all_label += labels.cpu().detach().numpy().tolist()
 
     auc_score = roc_auc_score(y_true=all_label,  y_score=all_predict)
 
@@ -66,7 +66,7 @@ def evaluation_model(data, params):
     # target_names = ['Clean', 'Defect']
     # report = classification_report(all_label, y_pred, target_names=target_names, output_dict=True)
     # create DataFrame from report
-    df = pd.DataFrame({'label': labels, 'pred': all_predict})
+    df = pd.DataFrame({'label': all_label, 'pred': all_predict})
     if os.path.isdir('./pred_scores/') is False:
         os.makedirs('./pred_scores/')
     df.to_csv('./pred_scores/test_com_' + params.project + '.csv', index=False, sep=',')
