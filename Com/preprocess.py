@@ -108,7 +108,7 @@ def preprocess_data(params, max_seq_length: int = 512):
         added_code_tokens = [tokenizer.cls_token]
         removed_code_tokens = [tokenizer.cls_token]
         for hunk in commit:
-            hunk = str_to_dict(hunk)
+            # hunk = str_to_dict(hunk)
             added_code = " ".join(hunk["added_code"])
             removed_code = " ".join(hunk["removed_code"])
             added_code_tokens += tokenizer.tokenize(added_code) + [tokenizer.sep_token]
