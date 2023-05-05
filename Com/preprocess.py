@@ -83,33 +83,19 @@ def preprocess_data(params, max_seq_length: int = 512):
     if params.train is True:
         # Load train data
         train_data = pickle.load(open(params.train_data, 'rb'))
-        train_ids, train_labels, train_messages, train_codes = train_data
+        ids, labels, messages, codes = train_data
     
     elif params.predict is True:
         # Load predict data
         predict_data = pickle.load(open(params.predict_data, 'rb'))
-        predict_ids, predict_labels, predict_messages, predict_codes = predict_data
+        ids, labels, messages, codes = predict_data
 
     # Load dictionary
     dictionary = pickle.load(open(params.dictionary_data, 'rb'))
     dict_msg, dict_code = dictionary  
 
     # Combine train data and test data into data
-    if params.train is True:
-        ids = train_ids
-        labels = list(train_labels)
-        msgs = train_messages
-        codes = train_codes
-    elif params.predict is True:
-        ids = predict_ids
-        labels = list(predict_labels)
-        msgs = predict_messages
-        codes = predict_codes
-
-    # Handling messages
-    pad_msg = padding_message(data=msgs, max_length=params.msg_length)
-    pad_msg = mapping_dict_msg(pad_msg=pad_msg, dict_msg=dict_msg)
-    pad_msg_labels = convert_msg_to_label(pad_msg=pad_msg, dict_msg=dict_msg)
+    labels = list(labels)
 
     # CodeBERT tokenizer
     tokenizer = RobertaTokenizer.from_pretrained("microsoft/codebert-base")
@@ -135,7 +121,7 @@ def preprocess_data(params, max_seq_length: int = 512):
         removed_code_list.append(removed_tokens_ids)
 
     # Using Pytorch Dataset and DataLoader
-    code_dataset = CustomDataset(added_code_list, removed_code_list, tokenizer.pad_token_id, pad_msg_labels, max_seq_length)
+    code_dataset = CustomDataset(added_code_list, removed_code_list, tokenizer.pad_token_id, labels, max_seq_length)
     code_dataloader = DataLoader(code_dataset, batch_size=params.batch_size)
 
-    return (code_dataloader, pad_msg_labels, dict_msg, dict_code)
+    return (code_dataloader, dict_code)

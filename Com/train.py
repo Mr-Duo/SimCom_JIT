@@ -7,21 +7,18 @@ from model import CodeBERT_JIT
 
 def train_model(data, params):
     # Split data
-    code_loader, pad_msg_labels, _, dict_code = data
+    code_loader, dict_code = data
 
     # Set up param
     params.save_dir = os.path.join(params.save_dir, datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
     params.vocab_code = len(dict_code)    
-    if len(pad_msg_labels.shape) == 1:
-        params.class_num = 1
-    else:
-        params.class_num = pad_msg_labels.shape[1]
+    params.class_num = 1
 
     # Create model, optimizer, criterion
     model = CodeBERT_JIT(params).to(device=params.device)
     # model = torch.compile(model, backend="inductor")
     optimizer = torch.optim.Adam(model.parameters(), lr=params.l2_reg_lambda)
-    criterion = nn.BCEWithLogitsLoss()
+    criterion = nn.BCELoss()
     
     # Training
     for epoch in range(1, params.num_epochs + 1):
