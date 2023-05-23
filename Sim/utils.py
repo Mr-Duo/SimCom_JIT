@@ -98,7 +98,6 @@ def evaluation_metrics(y_true, y_pred):
 
 def balance_pos_neg_in_training(X_train, y_train):
     rus = RandomUnderSampler(random_state=42)
-    print('y_train',type(y_train))
     X_resampled, y_resampled = rus.fit_resample(X_train, y_train)
     return X_resampled, y_resampled
 
@@ -108,7 +107,6 @@ def baseline_algorithm(train, test, args, only=False):
 
     ##over/under sample
     X_train,y_train = balance_pos_neg_in_training(X_train,y_train)
-    print(X_train[0,])
     acc, prc, rc, f1, auc_ = 0, 0, 0, 0, 0
     if args.algorithm == 'lr':
         starttime = time.time()
