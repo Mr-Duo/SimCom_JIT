@@ -3,6 +3,8 @@ from sklearn.metrics import auc, precision_recall_curve, roc_auc_score, accuracy
 import numpy as np
 from matplotlib import pyplot
 import argparse
+from sklearn.metrics import classification_report
+import pandas as pd
 
 np.random.seed(10)
 
@@ -150,7 +152,19 @@ rc = recall_score(y_true=y_true, y_pred=real_pred)
 ## Simple add
 pred2 = [ pred_[i] + pred[i] for i in range(len(pred_))]
 #print(len(pred2), len(label_))
-auc2 = roc_auc_score(y_true=np.array(label_),  y_score=np.array(pred2))
+auc2 = roc_auc_score(y_true=np.array(label_).astype(float),  y_score=np.array(pred2))
+
+# convert probabilities to binary predictions
+y_pred = [int(p >= 0.5) for p in np.array(pred2)]
+target_names = ['Clean', 'Defect']
+y_true = np.array(label_).astype(float)
+report = classification_report(y_true, y_pred, target_names=target_names, output_dict=True)
+# create DataFrame from report
+df = pd.DataFrame(report).transpose()
+
+# write DataFrame to CSV file
+df.to_csv('cc2vec_codeBERT_mean.csv')
+
 #print('\n SimCom: ')
 mean_pred = float(sum(pred2)/len(pred2))
 #eval_(y_true=np.array(label_),  y_pred=np.array(pred2), thresh = mean_pred )
