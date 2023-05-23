@@ -27,12 +27,13 @@ def train_model(data, params):
             # Extract data from DataLoader
             added_code = batch["added_code"].to(params.device)
             removed_code = batch["removed_code"].to(params.device)
+            message = batch["message"].to(params.device)
             labels = batch["labels"].to(params.device)
             
             optimizer.zero_grad()
 
             # Forward
-            predict = model(added_code, removed_code)
+            predict = model(added_code, removed_code, message)
 
             # Calculate loss
             loss = criterion(predict, labels)

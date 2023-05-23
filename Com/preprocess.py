@@ -6,9 +6,10 @@ import numpy as np
 import re
 
 class CustomDataset(Dataset):
-    def __init__(self, added_code_list, removed_code_list, pad_token_id, labels, max_seq_length):
+    def __init__(self, added_code_list, removed_code_list, message, pad_token_id, labels, max_seq_length):
         self.added_code_list = added_code_list
         self.removed_code_list = removed_code_list
+        self.message = message
         self.pad_token_id = pad_token_id
         self.max_seq_length = max_seq_length
         self.labels = labels
@@ -35,9 +36,12 @@ class CustomDataset(Dataset):
         added_code = torch.tensor(added_code)
         removed_code = torch.tensor(removed_code)
 
+        message = self.message[idx]
+
         return {
             'added_code': added_code,
             'removed_code': removed_code,
+            'message': message,
             'labels': labels
         }
     
@@ -97,6 +101,10 @@ def preprocess_data(params, max_seq_length: int = 512):
     # Combine train data and test data into data
     labels = list(labels)
 
+    # Handling message
+    pad_msg = padding_message(data=messages, max_length=params.msg_length)
+    pad_msg = mapping_dict_msg(pad_msg=pad_msg, dict_msg=dict_msg)
+
     # CodeBERT tokenizer
     tokenizer = RobertaTokenizer.from_pretrained("microsoft/codebert-base")
 
@@ -108,7 +116,7 @@ def preprocess_data(params, max_seq_length: int = 512):
         added_code_tokens = [tokenizer.cls_token]
         removed_code_tokens = [tokenizer.cls_token]
         for hunk in commit:
-            # hunk = str_to_dict(hunk)
+            hunk = str_to_dict(hunk)
             added_code = " ".join(hunk["added_code"])
             removed_code = " ".join(hunk["removed_code"])
             added_code_tokens += tokenizer.tokenize(added_code) + [tokenizer.sep_token]
@@ -121,7 +129,7 @@ def preprocess_data(params, max_seq_length: int = 512):
         removed_code_list.append(removed_tokens_ids)
 
     # Using Pytorch Dataset and DataLoader
-    code_dataset = CustomDataset(added_code_list, removed_code_list, tokenizer.pad_token_id, labels, max_seq_length)
+    code_dataset = CustomDataset(added_code_list, removed_code_list, pad_msg, tokenizer.pad_token_id, labels, max_seq_length)
     code_dataloader = DataLoader(code_dataset, batch_size=params.batch_size)
 
     return (code_dataloader, dict_code)
