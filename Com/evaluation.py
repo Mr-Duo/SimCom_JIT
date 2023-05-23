@@ -1,4 +1,4 @@
-from model import CodeBERT_JIT
+from model import DeepJIT
 from sklearn.metrics import roc_auc_score, auc, roc_auc_score, precision_recall_curve, classification_report
 import torch 
 from matplotlib import pyplot

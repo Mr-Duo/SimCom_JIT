@@ -3,19 +3,20 @@ from tqdm import tqdm
 import torch.nn as nn
 import os, datetime
 from utils import save
-from model import CodeBERT_JIT
+from model import DeepJIT
 
 def train_model(data, params):
     # Split data
-    code_loader, dict_code = data
+    code_loader, dict_msg, dict_code = data
 
     # Set up param
     params.save_dir = os.path.join(params.save_dir, datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
-    params.vocab_code = len(dict_code)    
+    params.filter_sizes = [int(k) for k in params.filter_sizes.split(',')]
+    params.vocab_msg, params.vocab_code = len(dict_msg), len(dict_code)
     params.class_num = 1
 
     # Create model, optimizer, criterion
-    model = CodeBERT_JIT(params).to(device=params.device)
+    model = DeepJIT(params).to(device=params.device)
     # model = torch.compile(model, backend="inductor")
     optimizer = torch.optim.Adam(model.parameters(), lr=params.l2_reg_lambda)
     criterion = nn.BCELoss()
@@ -25,14 +26,14 @@ def train_model(data, params):
         total_loss = 0
         for batch in tqdm(code_loader):
             # Extract data from DataLoader
-            added_code = batch["added_code"].to(params.device)
-            removed_code = batch["removed_code"].to(params.device)
+            code = batch["code"].to(params.device)
+            message = batch["message"].to(params.device)
             labels = batch["labels"].to(params.device)
             
             optimizer.zero_grad()
 
             # Forward
-            predict = model(added_code, removed_code)
+            predict = model(message, code)
 
             # Calculate loss
             loss = criterion(predict, labels)

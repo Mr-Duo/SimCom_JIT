@@ -4,40 +4,27 @@ import torch
 from transformers import RobertaTokenizer
 import numpy as np
 import re
+from padding import padding_data
 
 class CustomDataset(Dataset):
-    def __init__(self, added_code_list, removed_code_list, pad_token_id, labels, max_seq_length):
-        self.added_code_list = added_code_list
-        self.removed_code_list = removed_code_list
-        self.pad_token_id = pad_token_id
-        self.max_seq_length = max_seq_length
+    def __init__(self, code, message, labels):
+        self.code = code
+        self.message = message
         self.labels = labels
     
     def __len__(self):
-        return len(self.added_code_list)
+        return len(self.code)
     
     def __getitem__(self, idx):
-        # truncate the code sequence if it exceeds max_seq_length
-        added_code = self.added_code_list[idx][:self.max_seq_length]
-        
-        # pad the code sequence if it is shorter than max_seq_length
-        num_padding = self.max_seq_length - len(added_code)
-        added_code += [self.pad_token_id] * num_padding
-
-        # truncate the code sequence if it exceeds max_seq_lengthadded
-        removed_code = self.removed_code_list[idx][:self.max_seq_length]
-        
-        # pad the code sequence if it is shorter than max_seq_length
-        num_padding = self.max_seq_length - len(removed_code)
-        removed_code += [self.pad_token_id] * num_padding
-
         labels = torch.tensor(self.labels[idx], dtype=torch.float32)
-        added_code = torch.tensor(added_code)
-        removed_code = torch.tensor(removed_code)
+        code = self.code[idx]
+        message = self.message[idx]
+        code = torch.tensor(code)
+        message = torch.tensor(message)
 
         return {
-            'added_code': added_code,
-            'removed_code': removed_code,
+            'code': code,
+            'message': message,
             'labels': labels
         }
     
@@ -79,7 +66,7 @@ def mapping_dict_msg(pad_msg, dict_msg):
 def padding_message(data, max_length):
     return [padding_length(line=d, max_length=max_length) for d in data]
 
-def preprocess_data(params, max_seq_length: int = 512):
+def preprocess_data(params):
     if params.train is True:
         # Load train data
         train_data = pickle.load(open(params.train_data, 'rb'))
@@ -90,38 +77,14 @@ def preprocess_data(params, max_seq_length: int = 512):
         predict_data = pickle.load(open(params.predict_data, 'rb'))
         ids, labels, messages, codes = predict_data
 
-    # Load dictionary
-    dictionary = pickle.load(open(params.dictionary_data, 'rb'))
-    dict_msg, dict_code = dictionary  
+    dictionary = pickle.load(open(params.dictionary_data, 'rb'))   
+    dict_msg, dict_code = dictionary
 
-    # Combine train data and test data into data
-    labels = list(labels)
-
-    # CodeBERT tokenizer
-    tokenizer = RobertaTokenizer.from_pretrained("microsoft/codebert-base")
-
-    # Preprocessing codes
-    added_code_list = []
-    removed_code_list = []
-
-    for commit in codes:
-        added_code_tokens = [tokenizer.cls_token]
-        removed_code_tokens = [tokenizer.cls_token]
-        for hunk in commit:
-            # hunk = str_to_dict(hunk)
-            added_code = " ".join(hunk["added_code"])
-            removed_code = " ".join(hunk["removed_code"])
-            added_code_tokens += tokenizer.tokenize(added_code) + [tokenizer.sep_token]
-            removed_code_tokens += tokenizer.tokenize(removed_code) + [tokenizer.sep_token]
-        added_code_tokens += [tokenizer.eos_token]
-        removed_code_tokens += [tokenizer.eos_token]
-        added_tokens_ids = tokenizer.convert_tokens_to_ids(added_code_tokens)
-        removed_tokens_ids = tokenizer.convert_tokens_to_ids(removed_code_tokens)
-        added_code_list.append(added_tokens_ids)
-        removed_code_list.append(removed_tokens_ids)
+    pad_msg = padding_data(data=messages, dictionary=dict_msg, params=params, type='msg')        
+    pad_code = padding_data(data=codes, dictionary=dict_code, params=params, type='code')
 
     # Using Pytorch Dataset and DataLoader
-    code_dataset = CustomDataset(added_code_list, removed_code_list, tokenizer.pad_token_id, labels, max_seq_length)
+    code_dataset = CustomDataset(pad_code, pad_msg, labels)
     code_dataloader = DataLoader(code_dataset, batch_size=params.batch_size)
 
-    return (code_dataloader, dict_code)
+    return (code_dataloader, dict_msg, dict_code)
