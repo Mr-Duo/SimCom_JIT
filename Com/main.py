@@ -52,16 +52,18 @@ def read_args():
 if __name__ == '__main__':
     params = read_args().parse_args()
     params.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    
+    # import torch._dynamo as dynamo
+    # torch._dynamo.config.suppress_errors = True
+    # torch.backends.cudnn.benchmark = True
+
     if params.train is True:
 
         data = preprocess_data(params)
 
         train_model(data=data, params=params)
 
-        print('--------------------------------------------------------------------------------')
-        print('--------------------------Finish the training process---------------------------')
-        print('--------------------------------------------------------------------------------')
+        print("Done")
+
         exit()
     
     elif params.predict is True:
@@ -71,7 +73,7 @@ if __name__ == '__main__':
         data = preprocess_data(params)
         
         evaluation_model(data=data, params=params)
-        print('--------------------------------------------------------------------------------')
-        print('--------------------------Finish the extracting process-------------------------')
-        print('--------------------------------------------------------------------------------')
+
+        print("Done")
+        
         exit()
