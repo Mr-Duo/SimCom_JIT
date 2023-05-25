@@ -78,8 +78,8 @@ def load_df_data(path_data, long_commits, args, flag=None):
     return (ids, np.array(labels), features)
 
 def load_data(args):
-    train_path_data = (f'../data/hand_crafted_features/{args.project}/{args.data}_train.csv')
-    test_path_data = (f'../data/hand_crafted_features/{args.project}/{args.data}_test.csv')
+    train_path_data = (f'../data/lapredict-paper/{args.project}/cross/k_train.csv')
+    test_path_data = (f'../data/lapredict-paper/{args.project}/cross/k_test.csv')
     train = load_df_data(train_path_data, args.long_train_commits, args, 'test')
     test = load_df_data(test_path_data, args.long_test_commits, args, 'test')
     return train, test

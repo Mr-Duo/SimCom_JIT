@@ -4,8 +4,8 @@ import pandas as pd
 from utils import load_data, baseline_algorithm, auc_pc
 import os
 
+# Input arguement
 parser = argparse.ArgumentParser()
-
 parser.add_argument('-project', type=str, default='openstack')
 parser.add_argument('-data', type=str, default='k')
 parser.add_argument('-algorithm', type=str, default='lr')
@@ -13,7 +13,6 @@ parser.add_argument('-drop', type=str, default='')
 parser.add_argument('-only', type=bool, default=False)
 parser.add_argument('-long_commits', type=str, default= 'long_commits_ids/')
 parser.add_argument('-long_test_commits', type=str) 
-
 args = parser.parse_args()
 args.long_train_commits = args.long_commits + args.project + '_train_long_commits.pkl'
 args.long_test_commits = args.long_commits + args.project + '_test_long_commits.pkl'
