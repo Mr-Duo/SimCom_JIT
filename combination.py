@@ -55,7 +55,7 @@ def auc_pc(label, pred):
     pyplot.xlabel('Recall')
     pyplot.ylabel('Precision')
     pyplot.legend()
-    pyplot.savefig()
+    pyplot.savefig(f"{project}")
 
     return lr_auc
 
@@ -90,7 +90,7 @@ target_names = ['Clean', 'Defect']
 y_true = np.array(label_).astype(float)
 report = classification_report(y_true, y_pred, target_names=target_names, output_dict=True)
 df = pd.DataFrame(report).transpose()
-df.to_csv('SimCom.csv')
+df.to_csv(f'SimCom_{project}.csv')
 
 mean_pred = float(sum(pred2)/len(pred2))
 pc_ = auc_pc(label_, pred2)
