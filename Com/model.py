@@ -12,8 +12,6 @@ class CodeBERT_JIT(nn.Module):
         Class = args.class_num
 
         self.codeBERT = RobertaModel.from_pretrained("microsoft/codebert-base")
-        for param in self.codeBERT.base_model.parameters():
-            param.requires_grad = False
 
         # other information
         self.dropout = nn.Dropout(args.dropout_keep_prob)
