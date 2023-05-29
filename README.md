@@ -1,27 +1,47 @@
-# SimCom: An Effective Just-In-Time Defect Predictor by Combining Simple and Complex Models
+# SimCom
 
-## Dependency
+## How to run
 
-Python >=3.6.9
+### Branches
+```
+git checkout [branch]
+```
+* original: original model
+* codeBERT: using `output[0][:, 0]`
+* codeBERT_unfreeze: using `output[0][:, 0]` and fine-tune codeBERT
 
-pip install torch
+### To train Com
+```
+cd Com
 
-pip install transformers
+python main.py -train \
+    -project [project name] \
+    -train_data [absolute data path] \
+    -dictionary_data [absolute data path]
+```
 
-## data & pre-trained models
+### To evaluate Com
+```
+cd Com
 
-data can be found here (https://drive.google.com/file/d/1WbWC2lhHLW16OCycV4yLzIF9S4dLb6om/view?usp=sharing)
+python main.py -predict \
+    -project [project name] \
+    -predict_data [absolute data path] \
+    -dictionary_data [absolute dictionary path] \
+    -load_model [absolute model path]
+```
 
-In the "data" folder, "commit_content" is for the Complex Model and "hand_crafted_features" is for the Simple Model.
+### To train and evaluate Sim
+```
+cd Sim
 
-## Run SimCom
+python sim_model.py \
+    -project [project name] \
+    -train_data [absolute data path] \
+    -test_data [absolute data path]
+```
 
-    $$ python run_simcom.py -project [project_name]
-
-Example:
-
-    $$ python run_simcom.py -project qt
-
-Note that: the training (validation) and testing sesstions are integrated into a single script "run_simcom.py". It will first train and do predictions on the test sets.
-
-
+### To combinate Sim and Com
+```
+python combination.py -project [project name]
+```
