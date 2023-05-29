@@ -20,3 +20,6 @@ SimCom_jdt.csv
 SimCom_openstack.csv
 SimCom_platform.csv
 SimCom_qt.csv
+run_com.sh
+run_sim.sh
+combination.sh
