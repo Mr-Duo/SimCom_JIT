@@ -8,6 +8,8 @@ import os
 parser = argparse.ArgumentParser()
 parser.add_argument('-project', type=str, default='openstack')
 parser.add_argument('-data', type=str, default='k')
+parser.add_argument('-train_data', type=str)
+parser.add_argument('-test_data', type=str)
 parser.add_argument('-algorithm', type=str, default='lr')
 parser.add_argument('-drop', type=str, default='')
 parser.add_argument('-only', type=bool, default=False)
