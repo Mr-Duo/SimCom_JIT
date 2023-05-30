@@ -54,8 +54,8 @@ def evaluation_model(data, params):
 
             # Forward
             predict = model(added_code, removed_code, message)
-            all_predict += predict.cpu().detach().numpy().tolist()
-            all_label += labels.cpu().detach().numpy().tolist()
+            all_predict.append(predict.cpu().detach().numpy().tolist())
+            all_label.append(labels.cpu().detach().numpy().tolist())
 
     auc_score = roc_auc_score(y_true=all_label,  y_score=all_predict)
 
