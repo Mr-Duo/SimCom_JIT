@@ -39,14 +39,14 @@ def evaluation_model(data, params):
 
     # Create model, optimizer, criterion
     model = CodeBERT_JIT(params).to(device=params.device)
-    model.load_state_dict(torch.load(params.load_model))
+    model.load_state_dict(torch.load(params.load_model, map_location=params.device))
     # model = torch.compile(model)
 
     model.eval()
     with torch.no_grad():
         all_predict, all_label = [], []
         for batch in tqdm(code_loader):
-            # Extract data from DataLoader
+            # Extract data from DataLoader``
             added_code = batch["added_code"].to(params.device)
             removed_code = batch["removed_code"].to(params.device)
             message = batch["message"].to(params.device)
