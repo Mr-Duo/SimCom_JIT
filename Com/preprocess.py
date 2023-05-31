@@ -6,10 +6,10 @@ import numpy as np
 import re
 
 class CustomDataset(Dataset):
-    def __init__(self, added_code_list, removed_code_list, message, pad_token_id, labels, max_seq_length):
+    def __init__(self, added_code_list, removed_code_list, message_list, pad_token_id, labels, max_seq_length):
         self.added_code_list = added_code_list
         self.removed_code_list = removed_code_list
-        self.message = message
+        self.message_list = message_list
         self.pad_token_id = pad_token_id
         self.max_seq_length = max_seq_length
         self.labels = labels
@@ -32,11 +32,15 @@ class CustomDataset(Dataset):
         num_padding = self.max_seq_length - len(removed_code)
         removed_code += [self.pad_token_id] * num_padding
 
+        message = self.message_list[idx][:self.max_seq_length]
+
+        num_padding = self.max_seq_length - len(message)
+        message += [self.pad_token_id] * num_padding
+
         labels = torch.tensor(self.labels[idx], dtype=torch.float32)
         added_code = torch.tensor(added_code)
         removed_code = torch.tensor(removed_code)
-
-        message = self.message[idx]
+        message = torch.tensor(message)
 
         return {
             'added_code': added_code,
