@@ -111,8 +111,9 @@ def preprocess_data(params, max_seq_length: int = 512):
     # Handling message
     message_list = []
     for message in messages:
-        message_token = [tokenizer.cls_token] + tokenizer.tokenize(message) + [tokenizer.eos_token]
-        message_list.append(message_token)
+        message_tokens = [tokenizer.cls_token] + tokenizer.tokenize(message) + [tokenizer.eos_token]
+        message_tokens_ids = tokenizer.convert_tokens_to_ids(message_tokens)
+        message_list.append(message_tokens_ids)
 
     # Preprocessing codes
     added_code_list = []
