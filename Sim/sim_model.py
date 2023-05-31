@@ -8,17 +8,14 @@ import os
 parser = argparse.ArgumentParser()
 parser.add_argument('-project', type=str, default='openstack')
 parser.add_argument('-data', type=str, default='k')
-parser.add_argument('-algorithm', type=str, default='lr')
-parser.add_argument('-drop', type=str, default='')
+parser.add_argument('-train_data', type=str)
+parser.add_argument('-test_data', type=str)
 parser.add_argument('-only', type=bool, default=False)
-parser.add_argument('-long_commits', type=str, default= 'long_commits_ids/')
-parser.add_argument('-long_test_commits', type=str) 
+parser.add_argument('-drop', type=str, default='')
 args = parser.parse_args()
-args.long_train_commits = args.long_commits + args.project + '_train_long_commits.pkl'
-args.long_test_commits = args.long_commits + args.project + '_test_long_commits.pkl'
 
 train, test = load_data(args)
-labels, predicts = baseline_algorithm(train=train, test=test, args=args, only=args.only)
+labels, predicts = baseline_algorithm(train=train, test=test)
 auc_pc_score = auc_pc(labels, predicts)
 auc_roc = roc_auc_score(y_true=labels, y_score=predicts)
 
