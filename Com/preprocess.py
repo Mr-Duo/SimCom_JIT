@@ -101,12 +101,14 @@ def preprocess_data(params, max_seq_length: int = 512):
     # Combine train data and test data into data
     labels = list(labels)
 
-    # Handling message
-    pad_msg = padding_message(data=messages, max_length=params.msg_length)
-    pad_msg = mapping_dict_msg(pad_msg=pad_msg, dict_msg=dict_msg)
-
     # CodeBERT tokenizer
     tokenizer = RobertaTokenizer.from_pretrained("microsoft/codebert-base")
+
+    # Handling message
+    message_list = []
+    for message in messages:
+        message_token = [tokenizer.cls_token] + tokenizer.tokenize(message) + [tokenizer.eos_token]
+        message_list.append(message_token)
 
     # Preprocessing codes
     added_code_list = []
@@ -129,7 +131,7 @@ def preprocess_data(params, max_seq_length: int = 512):
         removed_code_list.append(removed_tokens_ids)
 
     # Using Pytorch Dataset and DataLoader
-    code_dataset = CustomDataset(added_code_list, removed_code_list, pad_msg, tokenizer.pad_token_id, labels, max_seq_length)
+    code_dataset = CustomDataset(added_code_list, removed_code_list, message_list, tokenizer.pad_token_id, labels, max_seq_length)
     code_dataloader = DataLoader(code_dataset, batch_size=params.batch_size)
 
     return (code_dataloader, dict_code)
