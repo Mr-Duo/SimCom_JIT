@@ -40,7 +40,7 @@ def evaluation_model(data, params):
     # Create model, optimizer, criterion
     model = CodeBERT_JIT(params).to(device=params.device)
     model.load_state_dict(torch.load(params.load_model, map_location=params.device))
-    # model = torch.compile(model)
+    model = torch.compile(model)
 
     model.eval()
     with torch.no_grad():
