@@ -72,4 +72,4 @@ def baseline_algorithm(train, test):
 
     y_pred = model.predict_proba(X_test)[:, 1]
 
-    return y_test, y_pred 
+    return y_test, y_pred
