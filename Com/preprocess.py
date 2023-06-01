@@ -4,6 +4,7 @@ import torch
 from transformers import RobertaTokenizer
 import numpy as np
 import re
+from padding import padding_data
 
 class CustomDataset(Dataset):
     def __init__(self, added_code_list, removed_code_list, message_list, pad_token_id, labels, max_seq_length):
@@ -32,10 +33,7 @@ class CustomDataset(Dataset):
         num_padding = self.max_seq_length - len(removed_code)
         removed_code += [self.pad_token_id] * num_padding
 
-        message = self.message_list[idx][:self.max_seq_length]
-
-        num_padding = self.max_seq_length - len(message)
-        message += [self.pad_token_id] * num_padding
+        message = self.message_list[idx]
 
         labels = torch.tensor(self.labels[idx], dtype=torch.float32)
         added_code = torch.tensor(added_code)
@@ -109,11 +107,8 @@ def preprocess_data(params, max_seq_length: int = 512):
     tokenizer = RobertaTokenizer.from_pretrained("microsoft/codebert-base")
 
     # Handling message
-    message_list = []
-    for message in messages:
-        message_tokens = [tokenizer.cls_token] + tokenizer.tokenize(message) + [tokenizer.eos_token]
-        message_tokens_ids = tokenizer.convert_tokens_to_ids(message_tokens)
-        message_list.append(message_tokens_ids)
+    pad_msg = padding_message(data=messages, max_length=params.msg_length)
+    pad_msg = mapping_dict_msg(pad_msg=pad_msg, dict_msg=dict_msg)
 
     # Preprocessing codes
     added_code_list = []
@@ -136,7 +131,7 @@ def preprocess_data(params, max_seq_length: int = 512):
         removed_code_list.append(removed_tokens_ids)
 
     # Using Pytorch Dataset and DataLoader
-    code_dataset = CustomDataset(added_code_list, removed_code_list, message_list, tokenizer.pad_token_id, labels, max_seq_length)
+    code_dataset = CustomDataset(added_code_list, removed_code_list, pad_msg, tokenizer.pad_token_id, labels, max_seq_length)
     code_dataloader = DataLoader(code_dataset, batch_size=params.batch_size)
 
-    return (code_dataloader, dict_code)
+    return (code_dataloader, dict_msg, dict_code)

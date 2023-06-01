@@ -7,16 +7,18 @@ from model import CodeBERT_JIT
 
 def train_model(data, params):
     # Split data
-    code_loader, dict_code = data
+    code_loader, dict_msg, dict_code = data
 
     # Set up param
     params.save_dir = os.path.join(params.save_dir, datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
-    params.vocab_code = len(dict_code)    
+    params.vocab_code = len(dict_code)
+    params.vocab_msg = len(dict_msg)
     params.class_num = 1
+    params.filter_sizes = [int(k) for k in params.filter_sizes.split(',')]
 
     # Create model, optimizer, criterion
     model = CodeBERT_JIT(params).to(device=params.device)
-    model = torch.compile(model, backend="inductor")
+    # model = torch.compile(model, backend="inductor")
     optimizer = torch.optim.Adam(model.parameters(), lr=params.l2_reg_lambda)
     criterion = nn.BCELoss()
     

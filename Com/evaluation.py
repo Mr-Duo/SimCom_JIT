@@ -30,16 +30,18 @@ def auc_pc(label, pred):
 
 def evaluation_model(data, params):
     # Split data
-    code_loader, dict_code = data
+    code_loader, dict_msg, dict_code = data
 
     # Set up param
     params.save_dir = os.path.join(params.save_dir, datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
-    params.vocab_code = len(dict_code)    
+    params.vocab_code = len(dict_code)
+    params.vocab_msg = len(dict_msg)
     params.class_num = 1
+    params.filter_sizes = [int(k) for k in params.filter_sizes.split(',')]
 
     # Create model, optimizer, criterion
     model = CodeBERT_JIT(params).to(device=params.device)
-    model = torch.compile(model)
+    # model = torch.compile(model)
     model.load_state_dict(torch.load(params.load_model, map_location=params.device))
 
     model.eval()

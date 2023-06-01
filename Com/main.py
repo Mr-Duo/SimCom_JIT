@@ -35,6 +35,8 @@ def read_args():
 
     # Number of parameters for Attention model
     parser.add_argument('-embed_size', type=int, default=768, help='the dimension of embedding vector')
+    parser.add_argument('-num_filters', type=int, default=64, help='the number of filters')
+    parser.add_argument('-filter_sizes', type=str, default='1, 2, 3', help='the filter size of convolutional layers')
     parser.add_argument('-hidden_size', type=int, default=32, help='the number of nodes in hidden layers')
     parser.add_argument('-dropout_keep_prob', type=float, default=0.5, help='dropout for training PatchNet')
     parser.add_argument('-l2_reg_lambda', type=float, default=1e-5, help='regularization rate')
@@ -52,9 +54,9 @@ def read_args():
 if __name__ == '__main__':
     params = read_args().parse_args()
     params.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    import torch._dynamo as dynamo
-    torch._dynamo.config.suppress_errors = True
-    torch.backends.cudnn.benchmark = True
+    # import torch._dynamo as dynamo
+    # torch._dynamo.config.suppress_errors = True
+    # torch.backends.cudnn.benchmark = True
 
     if params.train is True:
 
