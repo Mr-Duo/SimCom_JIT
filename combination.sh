@@ -1,3 +1,3 @@
 #! /bin/bash
 
-python combination.py -project gerrit
+python combination.py -project $1
