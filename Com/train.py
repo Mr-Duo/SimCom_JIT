@@ -24,6 +24,13 @@ def train_model(data, params):
     
     # Training
     for epoch in range(1, params.num_epochs + 1):
+        if epoch < 2:
+            for param in model.codeBERT.parameters():
+                param.requires_grad = True
+        else:
+            for param in model.codeBERT.parameters():
+                param.requires_grad = False
+                
         total_loss = 0
         for batch in tqdm(code_loader):
             # Extract data from DataLoader
