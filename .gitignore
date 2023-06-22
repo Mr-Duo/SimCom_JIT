@@ -24,3 +24,6 @@ run_com_train.sh
 run_com_test.sh
 run_sim.sh
 combination.sh
+combine.sh
+run_all.sh
+sim.sh
