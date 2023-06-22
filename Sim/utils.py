@@ -21,7 +21,9 @@ def replace_value_dataframe(df, args):
         df = df[['Unnamed: 0','_id','date','bug','__'] + args.only]
     return df.values
 
-def get_features(data):
+def get_features(data, jitbot=False):
+    if jitbot:
+        return data[:, 5:13]
     return data[:, 5:]
 
 def get_ids(data):
@@ -35,7 +37,7 @@ def get_label(data):
 def load_df_data(path_data, args):
     data = pd.read_csv(path_data)
     data = replace_value_dataframe(df=data, args=args)
-    ids, labels, features = get_ids(data=data), get_label(data=data), get_features(data=data)
+    ids, labels, features = get_ids(data=data), get_label(data=data), get_features(data=data, jitbot=args.jitbot)
     indexes = []
     cnt_noexits = 0
 

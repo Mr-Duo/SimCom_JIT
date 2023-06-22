@@ -12,6 +12,8 @@ parser.add_argument('-train_data', type=str)
 parser.add_argument('-test_data', type=str)
 parser.add_argument('-only', type=bool, default=False)
 parser.add_argument('-drop', type=str, default='')
+parser.add_argument('-jitbot', type=bool, default=False)
+
 args = parser.parse_args()
 
 train, test = load_data(args)
