@@ -10,6 +10,7 @@ git checkout [branch]
 * codeBERT: using `output[0][:, 0]`
 * codeBERT_unfreeze: using `output[0][:, 0]` and fine-tune codeBERT
 * codeBERT_unfreeze2: using `output[0][:, 0]` and fine-tune codeBERT only for the first 2 epochs
+* codeBERT_unfreeze2_tandataset: codeBERT_unfreeze2 but with Tan's dataset
 
 ### To train Com
 ```
