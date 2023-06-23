@@ -29,11 +29,11 @@ def padding_length(line, max_length):
 
 def padding_data(data, dictionary, params, type):
     if type == 'msg':
-        pad_msg = padding_message(data=data, max_length=params.msg_length)
+        pad_msg = padding_message(data=data, max_length=params["message_length"])
         pad_msg = mapping_dict_msg(pad_msg=pad_msg, dict_msg=dictionary)
         return pad_msg
     elif type == 'code':
-        pad_code = padding_commit_code(data=data, max_line=params.code_line, max_length=params.code_length)
+        pad_code = padding_commit_code(data=data, max_line=params["code_line"], max_length=params["code_length"])
         pad_code = mapping_dict_code(pad_code=pad_code, dict_code=dictionary)
         return pad_code
     else:
@@ -46,7 +46,6 @@ def padding_message(data, max_length):
 def mapping_dict_msg(pad_msg, dict_msg):
     return np.array(
         [np.array([dict_msg[w.lower()] if w.lower() in dict_msg.keys() else dict_msg['<NULL>'] for w in line.split(' ')]) for line in pad_msg])
-
 
 def mapping_dict_code(pad_code, dict_code):
     new_pad = [

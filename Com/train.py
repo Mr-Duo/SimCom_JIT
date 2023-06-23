@@ -23,6 +23,7 @@ def train_model(data, params):
     criterion = nn.BCELoss()
     
     # Training
+    print("Training...")
     for epoch in range(1, params.num_epochs + 1):
         if epoch <= 2:
             for param in model.codeBERT.parameters():

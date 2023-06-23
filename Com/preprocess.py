@@ -4,7 +4,7 @@ import torch
 from transformers import RobertaTokenizer
 import numpy as np
 import re
-from padding import padding_data
+from tqdm import tqdm
 
 class CustomDataset(Dataset):
     def __init__(self, added_code_list, removed_code_list, message_list, pad_token_id, labels, max_seq_length):
@@ -47,16 +47,6 @@ class CustomDataset(Dataset):
             'labels': labels
         }
     
-def str_to_dict(string: str) -> dict:  # sourcery skip: avoid-builtin-shadow
-    pattern = r'added_code:\s*(?P<added_code>.*?)\s*removed_code:\s*(?P<removed_code>.*?)\s*$'
-    if match := re.match(pattern, string, re.DOTALL):
-        dict = match.groupdict()
-        dict['added_code'] = dict['added_code'].strip()
-        dict['removed_code'] = dict['removed_code'].strip()
-    else:
-        dict = {"added_code": "", "removed_code": ""}
-    return dict
-    
 def padding_length(line, max_length):
     line_length = len(line.split())
     if line_length < max_length:
@@ -89,12 +79,12 @@ def preprocess_data(params, max_seq_length: int = 512):
     if params.train is True:
         # Load train data
         train_data = pickle.load(open(params.train_data, 'rb'))
-        ids, labels, messages, codes = train_data
+        ids, messages, codes, labels = train_data
     
     elif params.predict is True:
         # Load predict data
         predict_data = pickle.load(open(params.predict_data, 'rb'))
-        ids, labels, messages, codes = predict_data
+        ids, messages, codes, labels = predict_data
 
     # Load dictionary
     dictionary = pickle.load(open(params.dictionary_data, 'rb'))
@@ -114,11 +104,11 @@ def preprocess_data(params, max_seq_length: int = 512):
     added_code_list = []
     removed_code_list = []
 
-    for commit in codes:
+    print("Preprocessing...")
+    for commit in tqdm(codes):
         added_code_tokens = [tokenizer.cls_token]
         removed_code_tokens = [tokenizer.cls_token]
         for hunk in commit:
-            hunk = str_to_dict(hunk)
             added_code = " ".join(hunk["added_code"])
             removed_code = " ".join(hunk["removed_code"])
             added_code_tokens += tokenizer.tokenize(added_code) + [tokenizer.sep_token]
