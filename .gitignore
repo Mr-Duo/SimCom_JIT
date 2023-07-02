@@ -20,3 +20,10 @@ SimCom_jdt.csv
 SimCom_openstack.csv
 SimCom_platform.csv
 SimCom_qt.csv
+combine.sh
+run_all.sh
+sim.sh
+run_sim.sh
+run_com_train.sh
+run_com_test.sh
+combination.sh
