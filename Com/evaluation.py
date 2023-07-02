@@ -45,6 +45,7 @@ def evaluation_model(data, params):
     model.load_state_dict(torch.load(params.load_model, map_location=params.device))
 
     model.eval()
+    print("Evaluating...")
     with torch.no_grad():
         all_predict, all_label = [], []
         for batch in tqdm(code_loader):
