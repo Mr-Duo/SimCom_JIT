@@ -21,21 +21,23 @@ def replace_value_dataframe(df, args):
         df = df[['Unnamed: 0','_id','date','bug','__'] + args.only]
     return df.values
 
-def get_features(data):
-    return data[:, 5:]
+def get_features(data, jitbot=False):
+    if jitbot:
+        return data[:, 3:11]
+    return data[:, 3:17]
 
 def get_ids(data):
     return data[:, 1:2].flatten().tolist()
 
 def get_label(data):
-    data = data[:, 3:4].flatten().tolist()
+    data = data[:, 17:].flatten().tolist()
     data = [1 if int(d) > 0 else 0 for d in data]
     return data
 
 def load_df_data(path_data, args):
     data = pd.read_csv(path_data)
     data = replace_value_dataframe(df=data, args=args)
-    ids, labels, features = get_ids(data=data), get_label(data=data), get_features(data=data)
+    ids, labels, features = get_ids(data=data), get_label(data=data), get_features(data=data, jitbot=args.jitbot)
     indexes = []
     cnt_noexits = 0
 
@@ -72,4 +74,4 @@ def baseline_algorithm(train, test):
 
     y_pred = model.predict_proba(X_test)[:, 1]
 
-    return y_test, y_pred 
+    return y_test, y_pred
