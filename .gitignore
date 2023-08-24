@@ -14,12 +14,7 @@ jdt.png
 openstack.png
 platform.png
 qt.png
-SimCom_gerrit.csv
-SimCom_go.csv
-SimCom_jdt.csv
-SimCom_openstack.csv
-SimCom_platform.csv
-SimCom_qt.csv
+SimCom_*.csv
 run_com_train.sh
 run_com_test.sh
 run_sim.sh
@@ -27,3 +22,4 @@ combination.sh
 combine.sh
 run_all.sh
 sim.sh
+*_auc.txt
