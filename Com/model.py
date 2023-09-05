@@ -26,8 +26,8 @@ class CodeBERT_JIT(nn.Module):
 
         # other information
         self.dropout = nn.Dropout(args.dropout_keep_prob)
-        self.fc1 = nn.Linear(768 * 2 + len(Ks) * Co + Num_feature, args.hidden_size)  # hidden units
-        self.fc2 = nn.Linear(args.hidden_size, Class)
+        self.fc1 = nn.Linear(768 * 2 + len(Ks) * Co, args.hidden_size)  # hidden units
+        self.fc2 = nn.Linear(args.hidden_size + Num_feature, Class)
         self.sigmoid = nn.Sigmoid()
 
     def forward_msg(self, x, convs):
@@ -49,9 +49,9 @@ class CodeBERT_JIT(nn.Module):
 
         x_commit = torch.cat((x_added_coded, x_removed_coded, x_message), 1)
         x_commit = self.dropout(x_commit)
-        x_commit = torch.cat((x_commit, feature), 1)
         out = self.fc1(x_commit)
         out = F.relu(out)
+        out = torch.cat((out, feature), 1)
         out = self.fc2(out)
         out = self.sigmoid(out).squeeze(1)
         return out
