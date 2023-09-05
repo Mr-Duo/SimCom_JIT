@@ -16,6 +16,12 @@ def read_args():
     parser.add_argument('-test_data', type=str, default='./data/jit/openstack_test.pkl', help='the directory of our testing data')
     parser.add_argument('-dictionary_data', type=str, default='./data/jit/openstack_dict.pkl', help='the directory of our dicitonary data')
 
+    parser.add_argument('-features', type=str, default='./data/jit/openstack_train.pkl', help='the directory of our training data features')
+    parser.add_argument('-num_feature', type=int, default=14, help='number of features')
+    parser.add_argument('-only', type=bool, default=False)
+    parser.add_argument('-drop', type=str, default='')
+    parser.add_argument('-jitbot', type=bool, default=False)
+
     # Predicting our data
     parser.add_argument('-predict', action='store_true', help='extracting features')
     parser.add_argument('-predict_data', type=str, help='the directory of our extracting data')
