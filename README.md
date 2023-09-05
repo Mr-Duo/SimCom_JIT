@@ -18,6 +18,7 @@ cd Com
 python main.py -train \
     -project [project name] \
     -train_data [absolute data path] \
+    -features [absolute data path] \
     -dictionary_data [absolute data path]
 ```
 
@@ -28,6 +29,7 @@ cd Com
 python main.py -predict \
     -project [project name] \
     -predict_data [absolute data path] \
+    -features [absolute data path] \
     -dictionary_data [absolute dictionary path] \
     -load_model [absolute model path]
 ```
