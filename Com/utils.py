@@ -155,14 +155,14 @@ def replace_value_dataframe(df, args):
 
 def get_features(data, jitbot=False):
     if jitbot:
-        return data[:, 5:13]
-    return data[:, 5:]
+        return data[:, 3:11]
+    return data[:, 3:17]
 
 def get_ids(data):
     return data[:, 1:2].flatten().tolist()
 
 def get_label(data):
-    data = data[:, 3:4].flatten().tolist()
+    data = data[:, 17:].flatten().tolist()
     data = [1 if int(d) > 0 else 0 for d in data]
     return data
 
