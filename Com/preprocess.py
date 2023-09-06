@@ -98,14 +98,14 @@ def preprocess_data(params, max_seq_length: int = 512):
     if params.train is True:
         # Load train data
         train_data = pickle.load(open(params.train_data, 'rb'))
-        ids, messages, codes, labels = train_data
+        ids, labels, messages, codes = train_data
         
         features = load_data(params)
 
     elif params.predict is True:
         # Load predict data
         predict_data = pickle.load(open(params.predict_data, 'rb'))
-        ids, messages, codes, labels = predict_data
+        ids, labels, messages, codes = predict_data
 
         features = load_data(params)
 
