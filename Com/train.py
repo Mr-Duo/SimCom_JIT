@@ -3,7 +3,7 @@ from tqdm import tqdm
 import torch.nn as nn
 import os, datetime
 from utils import save
-from model import CodeBERT_JIT
+from model import DeepJIT
 
 def train_model(data, params):
     # Split data
@@ -17,7 +17,7 @@ def train_model(data, params):
     params.filter_sizes = [int(k) for k in params.filter_sizes.split(',')]
 
     # Create model, optimizer, criterion
-    model = CodeBERT_JIT(params).to(device=params.device)
+    model = DeepJIT(params).to(device=params.device)
     # model = torch.compile(model, backend="inductor")
     optimizer = torch.optim.Adam(model.parameters(), lr=params.l2_reg_lambda)
     criterion = nn.BCELoss()

@@ -30,12 +30,6 @@ def read_args():
     # Predicting our data
     parser.add_argument('-load_model', type=str, default=None, help='loading our model')
 
-    # Number of parameters for reformatting commits
-    parser.add_argument('--msg_length', type=int, default=256, help='the length of the commit message')
-    parser.add_argument('--code_file', type=int, default=2, help='the number of files in commit code')
-    parser.add_argument('--code_line', type=int, default=10, help='the number of LOC in each hunk of commit code')
-    parser.add_argument('--code_length', type=int, default=64, help='the length of each LOC of commit code')
-
     # Predicting our data
     parser.add_argument('--predict', action='store_true', help='predicting testing data')
 

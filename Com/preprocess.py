@@ -20,7 +20,7 @@ class CustomDataset(Dataset):
         self.features = features
     
     def __len__(self):
-        return len(self.added_code_list)
+        return len(self.code)
     
     def __getitem__(self, idx):
         # truncate the code sequence if it exceeds max_seq_length
@@ -94,7 +94,7 @@ def mapping_dict_msg(pad_msg, dict_msg):
 def padding_message(data, max_length):
     return [padding_length(line=d, max_length=max_length) for d in data]
 
-def preprocess_data(params, max_seq_length: int = 512):
+def preprocess_data(params):
     if params.train is True:
         # Load train data
         train_data = pickle.load(open(params.train_data, 'rb'))
