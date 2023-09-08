@@ -112,7 +112,7 @@ def preprocess_data(params, max_seq_length: int = 512):
     messages_list = []
 
     for message in messages:
-        message = BERT_tokenizer(message, padding='max_length', max_length=max_seq_length)
+        message = BERT_tokenizer(message, padding='max_length', truncation=True, max_length=max_seq_length)
         messages_list.append(message["input_ids"])
 
     # Preprocessing codes
