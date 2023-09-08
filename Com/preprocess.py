@@ -108,10 +108,6 @@ def preprocess_data(params, max_seq_length: int = 512):
 
         features = load_data(params)
 
-    # Load dictionary
-    dictionary = pickle.load(open(params.dictionary_data, 'rb'))
-    dict_msg, dict_code = dictionary  
-
     # Combine train data and test data into data
     labels = list(labels)
 
