@@ -1,10 +1,9 @@
 import pickle
 from torch.utils.data import Dataset, DataLoader
 import torch
-from transformers import RobertaTokenizer
+from transformers import RobertaTokenizer, AutoTokenizer
 import numpy as np
 import re
-from padding import padding_data
 
 class CustomDataset(Dataset):
     def __init__(self, added_code_list, removed_code_list, message_list, pad_token_id, labels, max_seq_length):
@@ -104,34 +103,40 @@ def preprocess_data(params, max_seq_length: int = 512):
     labels = list(labels)
 
     # CodeBERT tokenizer
-    tokenizer = RobertaTokenizer.from_pretrained("microsoft/codebert-base")
+    codeBERT_tokenizer = RobertaTokenizer.from_pretrained("microsoft/codebert-base")
 
-    # Handling message
-    pad_msg = padding_message(data=messages, max_length=params.msg_length)
-    pad_msg = mapping_dict_msg(pad_msg=pad_msg, dict_msg=dict_msg)
+    # BERT tokenizer
+    BERT_tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+
+    # Preprocessing messages
+    messages_list = []
+
+    for message in messages:
+        message = BERT_tokenizer(message, padding='max_length', max_length=max_seq_length)
+        messages_list.append(message["input_ids"])
 
     # Preprocessing codes
     added_code_list = []
     removed_code_list = []
 
     for commit in codes:
-        added_code_tokens = [tokenizer.cls_token]
-        removed_code_tokens = [tokenizer.cls_token]
+        added_code_tokens = [codeBERT_tokenizer.cls_token]
+        removed_code_tokens = [codeBERT_tokenizer.cls_token]
         for hunk in commit:
             hunk = str_to_dict(hunk)
             added_code = " ".join(hunk["added_code"])
             removed_code = " ".join(hunk["removed_code"])
-            added_code_tokens += tokenizer.tokenize(added_code) + [tokenizer.sep_token]
-            removed_code_tokens += tokenizer.tokenize(removed_code) + [tokenizer.sep_token]
-        added_code_tokens += [tokenizer.eos_token]
-        removed_code_tokens += [tokenizer.eos_token]
-        added_tokens_ids = tokenizer.convert_tokens_to_ids(added_code_tokens)
-        removed_tokens_ids = tokenizer.convert_tokens_to_ids(removed_code_tokens)
+            added_code_tokens += codeBERT_tokenizer.tokenize(added_code) + [codeBERT_tokenizer.sep_token]
+            removed_code_tokens += codeBERT_tokenizer.tokenize(removed_code) + [codeBERT_tokenizer.sep_token]
+        added_code_tokens += [codeBERT_tokenizer.eos_token]
+        removed_code_tokens += [codeBERT_tokenizer.eos_token]
+        added_tokens_ids = codeBERT_tokenizer.convert_tokens_to_ids(added_code_tokens)
+        removed_tokens_ids = codeBERT_tokenizer.convert_tokens_to_ids(removed_code_tokens)
         added_code_list.append(added_tokens_ids)
         removed_code_list.append(removed_tokens_ids)
 
     # Using Pytorch Dataset and DataLoader
-    code_dataset = CustomDataset(added_code_list, removed_code_list, pad_msg, tokenizer.pad_token_id, labels, max_seq_length)
+    code_dataset = CustomDataset(added_code_list, removed_code_list, messages_list, codeBERT_tokenizer.pad_token_id, labels, max_seq_length)
     code_dataloader = DataLoader(code_dataset, batch_size=params.batch_size)
 
     return (code_dataloader, dict_msg, dict_code)
