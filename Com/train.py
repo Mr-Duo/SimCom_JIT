@@ -27,9 +27,13 @@ def train_model(data, params):
         if epoch <= 2:
             for param in model.codeBERT.parameters():
                 param.requires_grad = True
+            for param in model.BERT.parameters():
+                param.requires_grad = True
         else:
             for param in model.codeBERT.parameters():
                 param.requires_grad = False
+            for param in model.BERT.parameters():
+                param.requires_grad = True
                 
         total_loss = 0
         for batch in tqdm(code_loader):
