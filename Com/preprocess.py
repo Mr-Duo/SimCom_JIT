@@ -1,7 +1,6 @@
 import pickle
 from torch.utils.data import Dataset, DataLoader
 import torch
-from transformers import RobertaTokenizer
 import numpy as np
 import re
 from padding import padding_data
