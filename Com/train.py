@@ -10,7 +10,7 @@ def train_model(data, params):
     code_loader, dict_msg, dict_code = data
 
     # Set up param
-    params.save_dir = os.path.join(params.save_dir, datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+    params.save_dir = os.path.join(params.save_dir, params.project)
     params.filter_sizes = [int(k) for k in params.filter_sizes.split(',')]
     params.vocab_msg, params.vocab_code = len(dict_msg), len(dict_code)
     params.class_num = 1
