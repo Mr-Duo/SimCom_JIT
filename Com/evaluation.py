@@ -1,9 +1,13 @@
 from model import DeepJIT
-from sklearn.metrics import roc_auc_score, auc, roc_auc_score, precision_recall_curve, classification_report
+from sklearn.metrics import roc_auc_score, roc_auc_score
 import torch
 import os, datetime
 import pandas as pd
 from tqdm import tqdm
+
+def write_to_file(file_path, content):
+    with open(file_path, 'a+') as file:
+        file.write(content + '\n')
 
 def evaluation_model(data, params):
     # Split data
@@ -35,6 +39,9 @@ def evaluation_model(data, params):
             all_label += labels.cpu().detach().numpy().tolist()
 
     auc_score = roc_auc_score(y_true=all_label,  y_score=all_predict)
+
+    # Call the function to write the content to the file
+    write_to_file("auc.txt", f"{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')} - {params.project} - {auc_score}")
 
     df = pd.DataFrame({'label': all_label, 'pred': all_predict})
     if os.path.isdir('./pred_scores/') is False:
