@@ -3,7 +3,6 @@ from sklearn.metrics import roc_auc_score, roc_auc_score
 import torch
 import os, datetime
 import pandas as pd
-from tqdm import tqdm
 
 def write_to_file(file_path, content):
     with open(file_path, 'a+') as file:
@@ -27,7 +26,7 @@ def evaluation_model(data, params):
     model.eval()
     with torch.no_grad():
         all_predict, all_label = [], []
-        for batch in tqdm(code_loader):
+        for batch in code_loader:
             # Extract data from DataLoader
             code = batch["code"].to(params.device)
             message = batch["message"].to(params.device)

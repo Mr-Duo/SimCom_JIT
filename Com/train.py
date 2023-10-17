@@ -1,5 +1,4 @@
 import torch 
-from tqdm import tqdm
 import torch.nn as nn
 import os, datetime
 from utils import save
@@ -24,7 +23,7 @@ def train_model(data, params):
     # Training
     for epoch in range(1, params.num_epochs + 1):
         total_loss = 0
-        for batch in tqdm(code_loader):
+        for batch in code_loader:
             # Extract data from DataLoader
             code = batch["code"].to(params.device)
             message = batch["message"].to(params.device)
