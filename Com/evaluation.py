@@ -1,8 +1,6 @@
 from model import DeepJIT
 from sklearn.metrics import roc_auc_score, auc, roc_auc_score, precision_recall_curve, classification_report
-import torch 
-from matplotlib import pyplot
-import numpy as np
+import torch
 import os, datetime
 import pandas as pd
 from tqdm import tqdm

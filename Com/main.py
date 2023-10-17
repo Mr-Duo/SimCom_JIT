@@ -53,9 +53,6 @@ def read_args():
 if __name__ == '__main__':
     params = read_args().parse_args()
     params.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # import torch._dynamo as dynamo
-    # torch._dynamo.config.suppress_errors = True
-    # torch.backends.cudnn.benchmark = True
 
     if params.train is True:
 

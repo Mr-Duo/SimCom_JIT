@@ -69,12 +69,12 @@ def preprocess_data(params):
     if params.train is True:
         # Load train data
         train_data = pickle.load(open(params.train_data, 'rb'))
-        ids, labels, messages, codes = train_data
+        _, messages, codes, labels = train_data
     
     elif params.predict is True:
         # Load predict data
         predict_data = pickle.load(open(params.predict_data, 'rb'))
-        ids, labels, messages, codes = predict_data
+        _, messages, codes, labels = predict_data
 
     dictionary = pickle.load(open(params.dictionary_data, 'rb'))   
     dict_msg, dict_code = dictionary
