@@ -5,3 +5,5 @@ pred_scores
 model
 *.png
 SimCom_*.csv
+*auc.txt
+auc.txt

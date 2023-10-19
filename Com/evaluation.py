@@ -1,5 +1,5 @@
 from model import DeepJIT
-from sklearn.metrics import roc_auc_score, roc_auc_score
+from sklearn.metrics import roc_auc_score
 import torch
 import os, datetime
 import pandas as pd
