@@ -9,28 +9,7 @@ def write_to_file(file_path, content):
     with open(file_path, 'a+') as file:
         file.write(content + '\n')
 
-def read_csv_1(fname):
-    if not os.path.exists(fname):
-        print("- File does not exist.")
-        sys.exit(1)
-
-    label = []
-    la = []
-    pred = []
-    with open(fname, 'r') as f:
-        reader = csv.reader(f)
-        i = 0
-        for line in reader:
-            i += 1
-            if i == 1:
-                continue
-            label.append(int(line[0]))
-            la.append(int(line[1]))
-            pred.append(float(line[2]))
-            
-    return pred, label, la
-
-def read_csv_2(fname):
+def read_csv_com(fname):
     if not os.path.exists(fname):
         print("- File does not exist.")
         sys.exit(1)
@@ -46,6 +25,27 @@ def read_csv_2(fname):
                 continue
             label.append(line[0])
             pred.append(float(line[1]))
+
+    return pred, label
+
+def read_csv_sim(fname):
+    if not os.path.exists(fname):
+        print("- File does not exist.")
+        sys.exit(1)
+
+    label = []
+    pred = []
+    with open(fname, 'r') as f:
+        reader = csv.reader(f)
+        i = 0
+        for line in reader:
+            i += 1
+            if i == 1:
+                continue
+            label.append(line[1])
+            pred.append(float(line[2]))
+
+    pred.reverse(), label.reverse()
 
     return pred, label
     
@@ -83,16 +83,16 @@ com_ = f'{data_dir1}test_com_{project}_{detail}.csv'
 # Sim
 sim_ = f'{data_dir2}test_sim_{project}_{detail}.csv'
 
-# LAPredict
-pred, _ = read_csv_2(sim_)
+# Sim
+pred, _ = read_csv_sim(sim_)
 
 # DeepJIT 
-pred_, label_ = read_csv_2(com_)
+pred_, label_ = read_csv_com(com_)
 
 ## Simple add
 pred2 = [ pred_[i] + pred[i] for i in range(len(pred_))]
 auc_ = roc_auc_score(y_true=np.array(label_).astype(float),  y_score=np.array(pred2))
 
 # Call the function to write the content to the file
-write_to_file("simcom_auc_if_avg.txt", f"{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')} - {project}_{detail} - {auc_}")
-print(f"AUC-ROC:{auc_}")
+write_to_file("simcom_auc.txt", f"{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')} - {project}_{detail} - {auc_}")
+print(f"AUC-ROC: {auc_}")
