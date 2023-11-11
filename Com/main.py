@@ -12,6 +12,8 @@ def read_args():
     # Training our model
     parser.add_argument('-train', action='store_true', help='training attention model')
 
+    parser.add_argument('-do_valid', action='store_true', help='validing DeepJIT model')
+    
     parser.add_argument('-train_data', type=str, default='./data/jit/openstack_train.pkl', help='the directory of our training data')
     parser.add_argument('-test_data', type=str, default='./data/jit/openstack_test.pkl', help='the directory of our testing data')
     parser.add_argument('-dictionary_data', type=str, default='./data/jit/openstack_dict.pkl', help='the directory of our dicitonary data')
@@ -40,13 +42,12 @@ def read_args():
     parser.add_argument('-dropout_keep_prob', type=float, default=0.5, help='dropout for training DeepJIT')
     parser.add_argument('-l2_reg_lambda', type=float, default=5e-5, help='regularization rate')
     parser.add_argument('-learning_rate', type=float, default=1e-4, help='learning rate')
-    parser.add_argument('-batch_size', type=int, default=64, help='batch size')
-    parser.add_argument('-num_epochs', type=int, default=30, help='the number of epochs')    
+    parser.add_argument('-batch_size', type=int, default=32, help='batch size')
+    parser.add_argument('-num_epochs', type=int, default=100, help='the number of epochs')    
     parser.add_argument('-save-dir', type=str, default='model', help='where to save the snapshot')
 
     # CUDA
-    parser.add_argument('-device', type=int, default=-1,
-                        help='device to use for iterate data, -1 mean cpu [default: -1]')
+    parser.add_argument('-device', type=int, default=-1, help='device to use for iterate data, -1 mean cpu [default: -1]')
     parser.add_argument('-no-cuda', action='store_true', default=False, help='disable the GPU')
     return parser
 

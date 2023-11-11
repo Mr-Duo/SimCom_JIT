@@ -6,7 +6,8 @@ import re
 from padding import padding_data
 
 class CustomDataset(Dataset):
-    def __init__(self, code, message, labels):
+    def __init__(self, ids, code, message, labels):
+        self.ids = ids
         self.code = code
         self.message = message
         self.labels = labels
@@ -15,6 +16,7 @@ class CustomDataset(Dataset):
         return len(self.code)
     
     def __getitem__(self, idx):
+        commit_hash = self.ids[idx]
         labels = torch.tensor(self.labels[idx], dtype=torch.float32)
         code = self.code[idx]
         message = self.message[idx]
@@ -22,6 +24,7 @@ class CustomDataset(Dataset):
         message = torch.tensor(message)
 
         return {
+            'commit_hash': commit_hash,
             'code': code,
             'message': message,
             'labels': labels
@@ -69,12 +72,16 @@ def preprocess_data(params):
     if params.train is True:
         # Load train data
         train_data = pickle.load(open(params.train_data, 'rb'))
-        _, messages, codes, labels = train_data
+        ids, messages, codes, labels = train_data
     
     elif params.predict is True:
         # Load predict data
         predict_data = pickle.load(open(params.predict_data, 'rb'))
-        _, messages, codes, labels = predict_data
+        ids, messages, codes, labels = predict_data
+
+    if params.do_valid is True:
+        val_data = pickle.load(open(params.test_data, 'rb'))
+        val_ids, val_messages, val_codes, val_labels = val_data
 
     dictionary = pickle.load(open(params.dictionary_data, 'rb'))   
     dict_msg, dict_code = dictionary
@@ -82,8 +89,19 @@ def preprocess_data(params):
     pad_msg = padding_data(data=messages, dictionary=dict_msg, params=params, type='msg')        
     pad_code = padding_data(data=codes, dictionary=dict_code, params=params, type='code')
 
+    if params.do_valid is True:
+        val_pad_msg = padding_data(data=val_messages, dictionary=dict_msg, params=params, type='msg')        
+        val_pad_code = padding_data(data=val_codes, dictionary=dict_code, params=params, type='code')
+
     # Using Pytorch Dataset and DataLoader
-    code_dataset = CustomDataset(pad_code, pad_msg, labels)
+    code_dataset = CustomDataset(ids, pad_code, pad_msg, labels)
     code_dataloader = DataLoader(code_dataset, batch_size=params.batch_size)
 
-    return (code_dataloader, dict_msg, dict_code)
+    if params.do_valid is True:
+        val_code_dataset = CustomDataset(val_ids, val_pad_code, val_pad_msg, val_labels)
+        val_code_dataloader = DataLoader(val_code_dataset, batch_size=params.batch_size)
+
+    if params.do_valid is True:
+        return (code_dataloader, val_code_dataloader, dict_msg, dict_code)
+    else:
+        return (code_dataloader, dict_msg, dict_code)

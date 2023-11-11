@@ -26,9 +26,10 @@ def evaluation_model(data, params):
 
     model.eval()
     with torch.no_grad():
-        all_predict, all_label = [], []
+        commit_hashes, all_predict, all_label = [], [], []
         for batch in tqdm(code_loader):
             # Extract data from DataLoader
+            commit_hashes.append(batch['commit_hash'][0])
             code = batch["code"].to(params.device)
             message = batch["message"].to(params.device)
             labels = batch["labels"].to(params.device)
@@ -43,7 +44,7 @@ def evaluation_model(data, params):
     # Call the function to write the content to the file
     write_to_file("auc.txt", f"{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')} - {params.project} - {auc_score}")
 
-    df = pd.DataFrame({'label': all_label, 'pred': all_predict})
+    df = pd.DataFrame({'commit_hash': commit_hashes, 'label': all_label, 'pred': all_predict})
     if os.path.isdir('./pred_scores/') is False:
         os.makedirs('./pred_scores/')
     df.to_csv('./pred_scores/test_com_' + params.project + '.csv', index=False, sep=',')
