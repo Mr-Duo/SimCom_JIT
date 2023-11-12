@@ -27,6 +27,7 @@ def train_model(data, params):
     
     # Validate
     best_valid_score = 0
+    smallest_loss = 1000000
     early_stop_count = 5
 
     # Training
@@ -76,7 +77,7 @@ def train_model(data, params):
             if valid_score > best_valid_score:
                 best_valid_score = valid_score
                 print('Save a better model', best_valid_score)
-                save_best(model, params.save_dir)
+                save_best(model, params.save_dir, file_name='best_model')
             else:
                 print('No update of models', early_stop_count)
                 if epoch > 5:
@@ -84,11 +85,11 @@ def train_model(data, params):
                 if early_stop_count < 0:
                     break
         else:
-            valid_score = auc_score
-            if valid_score > best_valid_score:
-                best_valid_score = valid_score
-                print('Save a better model', best_valid_score)
-                save_best(model, params.save_dir, file_name='')
+            loss_score = auc_score
+            if loss_score < smallest_loss:
+                smallest_loss = loss_score
+                print('Save a better model', smallest_loss)
+                save_best(model, params.save_dir, file_name='deepjit_best_model')
             else:
                 print('No update of models', early_stop_count)
                 if epoch > 5:
