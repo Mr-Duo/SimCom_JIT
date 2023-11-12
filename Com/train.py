@@ -85,7 +85,7 @@ def train_model(data, params):
                 if early_stop_count < 0:
                     break
         else:
-            loss_score = auc_score
+            loss_score = total_loss
             if loss_score < smallest_loss:
                 smallest_loss = loss_score
                 print('Save a better model', smallest_loss)
