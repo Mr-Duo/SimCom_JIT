@@ -2,9 +2,18 @@ import torch
 from tqdm import tqdm
 import torch.nn as nn
 import os
-from utils import save_best, save
+from utils import save_best
 from model import DeepJIT
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score, precision_recall_curve, auc
+import numpy as np
+
+def auc_pc(label, pred):
+    lr_probs = np.array(pred)
+    testy = np.array([float(l) for l in label])
+    lr_precision, lr_recall, _ = precision_recall_curve(testy, lr_probs)
+    lr_auc = auc(lr_recall, lr_precision)
+    # summarize scores
+    return lr_auc
 
 def train_model(data, params):
     # Split data
@@ -71,9 +80,10 @@ def train_model(data, params):
                     all_label += labels.cpu().detach().numpy().tolist()
 
             auc_score = roc_auc_score(y_true=all_label,  y_score=all_predict)
-            print(f'Valid data -- AUC-ROC score: {auc_score}')
+            auc_pc_score = auc_pc(all_label, all_predict)
+            print('Valid data -- AUC-ROC score:', auc_score,  ' -- AUC-PC score:', auc_pc_score)
 
-            valid_score = auc_score
+            valid_score = auc_pc_score
             if valid_score > best_valid_score:
                 best_valid_score = valid_score
                 print('Save a better model', best_valid_score)
