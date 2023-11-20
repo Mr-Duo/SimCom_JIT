@@ -89,12 +89,16 @@ def preprocess_data(params, max_seq_length: int = 512):
     if params.train is True:
         # Load train data
         train_data = pickle.load(open(params.train_data, 'rb'))
-        ids, labels, messages, codes = train_data
+        ids, messages, codes, labels = train_data
     
     elif params.predict is True:
         # Load predict data
         predict_data = pickle.load(open(params.predict_data, 'rb'))
-        ids, labels, messages, codes = predict_data
+        ids, messages, codes, labels = predict_data
+    
+    if params.do_valid is True:
+        val_data = pickle.load(open(params.test_data, 'rb'))
+        val_ids, val_messages, val_codes, val_labels = val_data
 
     # Load dictionary
     dictionary = pickle.load(open(params.dictionary_data, 'rb'))
@@ -134,4 +138,36 @@ def preprocess_data(params, max_seq_length: int = 512):
     code_dataset = CustomDataset(added_code_list, removed_code_list, pad_msg, tokenizer.pad_token_id, labels, max_seq_length)
     code_dataloader = DataLoader(code_dataset, batch_size=params.batch_size)
 
-    return (code_dataloader, dict_msg, dict_code)
+    if params.do_valid is True:
+         # Handling message
+        val_pad_msg = padding_message(data=val_messages, max_length=params.msg_length)
+        val_pad_msg = mapping_dict_msg(pad_msg=val_pad_msg, dict_msg=dict_msg)
+
+        # Preprocessing codes
+        added_code_list = []
+        removed_code_list = []
+
+        for commit in val_codes:
+            added_code_tokens = [tokenizer.cls_token]
+            removed_code_tokens = [tokenizer.cls_token]
+            for hunk in commit:
+                hunk = str_to_dict(hunk)
+                added_code = " ".join(hunk["added_code"])
+                removed_code = " ".join(hunk["removed_code"])
+                added_code_tokens += tokenizer.tokenize(added_code) + [tokenizer.sep_token]
+                removed_code_tokens += tokenizer.tokenize(removed_code) + [tokenizer.sep_token]
+            added_code_tokens += [tokenizer.eos_token]
+            removed_code_tokens += [tokenizer.eos_token]
+            added_tokens_ids = tokenizer.convert_tokens_to_ids(added_code_tokens)
+            removed_tokens_ids = tokenizer.convert_tokens_to_ids(removed_code_tokens)
+            added_code_list.append(added_tokens_ids)
+            removed_code_list.append(removed_tokens_ids)
+
+        # Using Pytorch Dataset and DataLoader
+        val_code_dataset = CustomDataset(added_code_list, removed_code_list, val_pad_msg, tokenizer.pad_token_id, val_labels, max_seq_length)
+        val_code_dataloader = DataLoader(val_code_dataset, batch_size=params.batch_size)
+
+    if params.do_valid is True:
+        return (code_dataloader, val_code_dataloader, dict_msg, dict_code)
+    else:
+        return (code_dataloader, dict_msg, dict_code)

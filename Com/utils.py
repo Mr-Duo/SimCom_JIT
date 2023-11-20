@@ -132,3 +132,10 @@ def save(model, save_dir, save_prefix, epochs):
     save_prefix = os.path.join(save_dir, save_prefix)
     save_path = f'{save_prefix}_{epochs}.pt'
     torch.save(model.state_dict(), save_path)
+
+def save_best(model, save_dir, file_name='best_model'):
+    if not os.path.isdir(save_dir):       
+        os.makedirs(save_dir)
+    file_name = os.path.join(save_dir, file_name)
+    save_path = f'{file_name}.pt'
+    torch.save(model.state_dict(), save_path)
