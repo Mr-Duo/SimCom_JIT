@@ -9,4 +9,4 @@ echo "Val dir: $5"
 
 bash deepjit_train.sh $1 $2 $4 $6
 
-bash deepjit_test.sh $1 $2 $3 $5 $6
+bash deepjit_test.sh $1 $2 $3 $4 $5 $6
