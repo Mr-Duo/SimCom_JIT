@@ -79,7 +79,7 @@ def preprocess_data(params):
         predict_data = pickle.load(open(params.predict_data, 'rb'))
         ids, labels, messages, codes = predict_data
 
-    if params.do_valid is True:
+    if params.do_valid is True and params.train is True:
         val_data = pickle.load(open(params.test_data, 'rb'))
         val_ids, val_labels, val_messages, val_codes = val_data
 
@@ -89,7 +89,7 @@ def preprocess_data(params):
     pad_msg = padding_data(data=messages, dictionary=dict_msg, params=params, type='msg')        
     pad_code = padding_data(data=codes, dictionary=dict_code, params=params, type='code')
 
-    if params.do_valid is True:
+    if params.do_valid is True and params.train is True:
         val_pad_msg = padding_data(data=val_messages, dictionary=dict_msg, params=params, type='msg')        
         val_pad_code = padding_data(data=val_codes, dictionary=dict_code, params=params, type='code')
 
@@ -97,11 +97,11 @@ def preprocess_data(params):
     code_dataset = CustomDataset(ids, pad_code, pad_msg, labels)
     code_dataloader = DataLoader(code_dataset, batch_size=params.batch_size)
 
-    if params.do_valid is True:
+    if params.do_valid is True and params.train is True:
         val_code_dataset = CustomDataset(val_ids, val_pad_code, val_pad_msg, val_labels)
         val_code_dataloader = DataLoader(val_code_dataset, batch_size=params.batch_size)
 
-    if params.do_valid is True:
+    if params.do_valid is True and params.train is True:
         return (code_dataloader, val_code_dataloader, dict_msg, dict_code)
     else:
         return (code_dataloader, dict_msg, dict_code)

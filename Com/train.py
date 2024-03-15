@@ -1,11 +1,12 @@
 import torch 
 from tqdm import tqdm
 import torch.nn as nn
-import os
+import os, time
 from utils import save_best
 from model import DeepJIT
 from sklearn.metrics import roc_auc_score, precision_recall_curve, auc
 import numpy as np
+from logs import *
 
 def auc_pc(label, pred):
     lr_probs = np.array(pred)
@@ -38,6 +39,9 @@ def train_model(data, params):
     best_valid_score = 0
     smallest_loss = 1000000
     early_stop_count = 5
+
+    # Record the start time
+    start_time = time.time()
 
     # Training
     for epoch in range(1, params.num_epochs + 1):
@@ -106,3 +110,24 @@ def train_model(data, params):
                     early_stop_count = early_stop_count - 1
                 if early_stop_count < 0:
                     break
+
+    # Record the end time
+    end_time = time.time()
+
+    # Call the function to write the content to the file
+    # Calculate the elapsed time
+    elapsed_time = end_time - start_time
+
+    ram = get_ram_usage()
+
+    vram = get_vram_usage()
+
+    if params.do_valid:
+        model = "SimCom"
+    else:
+        model = "DeepJIT"
+
+    # Call the function to write the content to the file
+    logs(params.training_time, params.project, elapsed_time, model)
+    logs(params.ram, params.project, ram, model)
+    logs(params.vram, params.project, vram, model)
