@@ -62,10 +62,10 @@ def evaluation_model(data, params):
         model = "DeepJIT"
 
     # Call the function to write the content to the file
-    logs(params.auc, params.project, auc_score, model)
-    logs(params.testing_time, params.project, elapsed_time, model)
-    logs(params.ram, params.project, ram, model)
-    logs(params.vram, params.project, vram, model)
+    #logs(params.auc, params.project, auc_score, model)
+    #logs(params.testing_time, params.project, elapsed_time, model)
+    #logs(params.ram, params.project, ram, model)
+    #logs(params.vram, params.project, vram, model)
 
     df = pd.DataFrame({'commit_hash': commit_hashes, 'label': all_label, 'pred': all_predict})
     if os.path.isdir('./pred_scores/') is False:
