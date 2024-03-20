@@ -3,7 +3,8 @@ import psutil, subprocess
 
 def logs(file_path, project_name, value, model):
     # Read existing CSV file
-    df = pd.read_csv(file_path)
+    if os.path.exists(file_path):
+        df = pd.read_csv(file_path)
     
     # Append new data to DataFrame
     filtered_df = df[df["Project Name"] == project_name]
