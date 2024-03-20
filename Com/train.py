@@ -128,6 +128,6 @@ def train_model(data, params):
         model = "DeepJIT"
 
     # Call the function to write the content to the file
-    logs(params.training_time, params.project, elapsed_time, model)
-    logs(params.ram, params.project, ram, model)
-    logs(params.vram, params.project, vram, model)
+    #logs(params.training_time, params.project, elapsed_time, model)
+    #logs(params.ram, params.project, ram, model)
+    #logs(params.vram, params.project, vram, model)
