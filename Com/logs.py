@@ -1,5 +1,6 @@
 import pandas as pd
 import psutil, subprocess
+import os
 
 def logs(file_path, project_name, value, model):
     # Read existing CSV file
