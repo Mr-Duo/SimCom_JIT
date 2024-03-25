@@ -1,6 +1,6 @@
 #! /bin/bash
-cd Com
-for prj in go gerrit platform jdt openstack qt 
+cd "Com"
+for prj in go gerrit platform jdt openstack qt ;
 do 
 python main.py -train \
     -project prj \
