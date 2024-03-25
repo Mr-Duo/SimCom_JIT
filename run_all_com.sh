@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 for prj in go gerrit platform jdt openstack qt 
 do 
