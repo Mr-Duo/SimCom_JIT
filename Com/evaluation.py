@@ -70,5 +70,5 @@ def evaluation_model(data, params):
     df = pd.DataFrame({'commit_hash': commit_hashes, 'label': all_label, 'pred': all_predict})
     if os.path.isdir('./pred_scores/') is False:
         os.makedirs('./pred_scores/')
-    df.to_csv('./pred_scores/test_com_' + params.project + '.csv', index=False, sep=',')
+    df.to_csv('./pred_scores/' + params.name + '_com_' + params.project + '.csv', index=False, sep=',')
     print('Test data -- AUC score:', auc_score)
